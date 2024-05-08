@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useGlobalContext } from "./(auth)/context/GlobalProvider";
 import { Text, View, Image } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Link, Redirect, router } from "expo-router";
@@ -8,6 +9,16 @@ import { images } from "../constants";
 import CustomButton from "./components/CustomButton";
 
 export default function App() {
+  const { isLoading, isLoggedIn } = useGlobalContext();
+
+  // useEffect(() => {
+  //   if (!isLoading && isLoggedIn) {
+  //     router.replace("/home");
+  //   }
+  // }, [isLoggedIn, isLoading]);
+
+  if (!isLoading && isLoggedIn) return <Redirect href={"/home"} />;
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#161622" }}>
       <ScrollView contentContainerStyle={{ height: "100%" }}>
