@@ -1,18 +1,32 @@
-import { useState } from "react";
-import { View, Text, FlatList, Image, RefreshControl } from "react-native";
+import { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  Image,
+  RefreshControl,
+  Alert,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../../constants";
 import SearchInput from "../components/SearchInput";
 import Trending from "../components/Trending";
 import EmptyState from "../components/EmptyState";
+import { getAllPosts } from "../lib/appwrite";
+import useAppwrite from "../lib/useAppwrite";
 
 const Home = () => {
-  const [refresing, setrefresing] = useState(false);
+  const { data: posts } = useAppwrite(getAllPosts);
+
+  const [refresing, setreFresing] = useState(false);
   const onRefresh = async () => {
-    setrefresing(true);
+    setreFresing(true);
     //if any new videos appeard
-    setrefresing(false);
+    setreFresing(false);
   };
+
+  console.log(posts);
+
   return (
     <SafeAreaView className="bg-primary h-full">
       <FlatList
