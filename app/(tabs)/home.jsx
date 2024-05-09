@@ -1,12 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  Image,
-  RefreshControl,
-  Alert,
-} from "react-native";
+import { View, Text, FlatList, Image, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../../constants";
 import SearchInput from "../components/SearchInput";
@@ -14,14 +7,15 @@ import Trending from "../components/Trending";
 import EmptyState from "../components/EmptyState";
 import { getAllPosts } from "../lib/appwrite";
 import useAppwrite from "../lib/useAppwrite";
+import VideoCard from "../components/VideoCard";
 
 const Home = () => {
-  const { data: posts } = useAppwrite(getAllPosts);
+  const { data: posts, refetch } = useAppwrite(getAllPosts);
 
   const [refresing, setreFresing] = useState(false);
   const onRefresh = async () => {
     setreFresing(true);
-    //if any new videos appeard
+    await refetch();
     setreFresing(false);
   };
 
@@ -30,11 +24,9 @@ const Home = () => {
   return (
     <SafeAreaView className="bg-primary h-full">
       <FlatList
-        data={[{ id: 1 }, { id: 2 }, { id: 3 }]}
+        data={posts}
         keyExtractor={(item) => item.$id}
-        renderItem={({ item }) => (
-          <Text className="text-3xl text-white">{item.id}</Text>
-        )}
+        renderItem={({ item }) => <VideoCard video={item} />}
         ListHeaderComponent={() => (
           <View className="my-6 px-4 space-y-6">
             <View className="justify-between items-start flex-row mb-6 ">
@@ -58,8 +50,8 @@ const Home = () => {
             <Text className="font-pregular text-lg text-gray-100 mb-3">
               Latest Video
             </Text>
-            <Trending posts={[{ id: 1 }, { id: 2 }, { id: 3 }] ?? []} />
-            <View className="w-4 flex-1 pt-5 pb-8"></View>
+            {/* <Trending posts={[{ id: 1 }, { id: 2 }, { id: 3 }] ?? []} /> */}
+            {/* <View className="w-4 flex-1 pt-5 pb-8"></View> */}
           </View>
         )}
         ListEmptyComponent={() => (
