@@ -1,6 +1,7 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import { icons, images } from "../../constants";
+import { icons } from "../../constants";
+import { Video, ResizeMode } from "expo-av";
 
 const VideoCard = ({
   video: {
@@ -11,6 +12,8 @@ const VideoCard = ({
   },
 }) => {
   const [play, setPlay] = useState(false);
+  const [thumbnailError, setThumbnailError] = useState(false);
+
   return (
     <View className="flex-col items-center px-4 mb-14">
       <View className="flex-row items-start gap-3">
@@ -38,20 +41,36 @@ const VideoCard = ({
         </View>
       </View>
       {play ? (
-        <Text>Playing</Text>
+        <Video
+          source={{ uri: video }}
+          className="w-full h-60 rounded-xl mt-3 "
+          resizeMode={ResizeMode.CONTAIN}
+          useNativeControls
+          shouldPlay
+          onPlaybackStatusUpdate={(status) => {
+            if (status.didJustFinish) {
+              setPlay(false);
+            }
+          }}
+        />
       ) : (
-        <TouchableOpacity className="w-full h-60 rounded-xl mt-3 relative justify-center items-center">
-          <Image
-            // source={{ uri: thumbnail }}
-            source={images.taamnarak}
-            className="w-full h-full round-xl mt-3"
-            resizeMode="cover"
-          />
-          <Image
-            source={icons.play}
-            className="w-12 h-12 absolute"
-            resizeMode="contain"
-          />
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => setPlay(true)}
+          className="w-full h-60 rounded-xl mt-3 relative justify-center items-center">
+          <>
+            <Image
+              source={{ uri: thumbnail }}
+              onError={() => setThumbnailError(true)}
+              className="w-full h-full round-xl mt-3"
+              resizeMode="cover"
+            />
+            <Image
+              source={icons.play}
+              className="w-12 h-12 absolute"
+              resizeMode="contain"
+            />
+          </>
         </TouchableOpacity>
       )}
     </View>
