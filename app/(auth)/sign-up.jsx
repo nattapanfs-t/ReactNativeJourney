@@ -26,15 +26,15 @@ const SignUp = () => {
 
   const submit = async () => {
     if (form.username === "" || form.email === "" || form.password === "") {
-      Alert.alert("Error", "Please fill in all the fields");
+      Alert.alert("Error", "Please fill in all fields");
     }
 
     setisSubmitting(true);
-
     try {
       const result = await createUser(form.email, form.password, form.username);
       setUser(result);
       setisLoggedIn(true);
+
       router.replace("/home");
     } catch (error) {
       Alert.alert("Error", error.message);
@@ -42,7 +42,6 @@ const SignUp = () => {
       setisSubmitting(false);
     }
   };
-
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView>

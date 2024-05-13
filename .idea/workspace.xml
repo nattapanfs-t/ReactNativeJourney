@@ -5,9 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7ad87d11-fb82-41f1-9e1c-a554859ba1ef" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/home.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/home.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/lib/useAppwrite.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/lib/useAppwrite.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(auth)/sign-in.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(auth)/sign-in.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(auth)/sign-up.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(auth)/sign-up.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/components/VideoCard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/components/VideoCard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/constants/images.js" beforeDir="false" afterPath="$PROJECT_DIR$/constants/images.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

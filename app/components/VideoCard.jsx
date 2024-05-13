@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import { icons } from "../../constants";
+import { icons, images } from "../../constants";
 import { Video, ResizeMode } from "expo-av";
 
 const VideoCard = ({
@@ -42,7 +42,7 @@ const VideoCard = ({
       </View>
       {play ? (
         <Video
-          source={{ uri: video }}
+          source={images.dataProcessing}
           className="w-full h-60 rounded-xl mt-3 "
           resizeMode={ResizeMode.CONTAIN}
           useNativeControls

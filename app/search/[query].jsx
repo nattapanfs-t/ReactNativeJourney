@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
-import { View, Text, FlatList, Image, RefreshControl } from "react-native";
+import { useEffect } from "react";
+import { View, Text, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { images } from "../../constants";
 import SearchInput from "../components/SearchInput";
 import EmptyState from "../components/EmptyState";
 import { searchPosts } from "../lib/appwrite";

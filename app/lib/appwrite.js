@@ -71,15 +71,19 @@ export const createUser = async (email, password, username) => {
 
 export const signIn = async (email, password) => {
   try {
-    const session = await account.get();
-    if (session) {
-      return;
-    }
-    const newSession = await account.createEmailPasswordSession(
-      email,
-      password
-    );
-    return newSession;
+    const session = await account.createEmailPasswordSession(email, password);
+
+    return session;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const getAccount = async () => {
+  try {
+    const currentAccount = await account.get();
+
+    return currentAccount;
   } catch (error) {
     throw new Error(error);
   }
@@ -87,17 +91,21 @@ export const signIn = async (email, password) => {
 
 export const getCurrentUser = async () => {
   try {
-    const currentAccount = await account.get();
+    const currentAccount = await getAccount();
     if (!currentAccount) throw Error;
+
     const currentUser = await databases.listDocuments(
       databaseId,
       userCollectionId,
       [Query.equal("accountId", currentAccount.$id)]
     );
-    if (!createUser) throw Error;
-    return currentUser.document[0];
+
+    if (!currentUser) throw Error;
+
+    return currentUser.documents[0];
   } catch (error) {
     console.log(error);
+    return null;
   }
 };
 
@@ -120,7 +128,7 @@ export const getLatestPosts = async () => {
   }
 };
 
-export async function searchPosts(query) {
+export const searchPosts = async (query) => {
   try {
     const posts = await databases.listDocuments(databaseId, videoCollectionID, [
       Query.search("title", query),
@@ -132,4 +140,27 @@ export async function searchPosts(query) {
   } catch (error) {
     throw new Error(error);
   }
-}
+};
+
+export const getUserPost = async (userId) => {
+  try {
+    const posts = await databases.listDocuments(databaseId, videoCollectionID, [
+      Query.equal("users", userId),
+    ]);
+
+    if (!posts) throw new Error("Something went wrong");
+
+    return posts.documents;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const signOut = async () => {
+  try {
+    const session = await account.deleteSession("current");
+    return session;
+  } catch (error) {
+    throw new Error(error);
+  }
+};

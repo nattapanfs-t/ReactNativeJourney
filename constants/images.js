@@ -8,6 +8,8 @@ import empty from "../assets/images/empty.png";
 import taamSwag from "../assets/images/taamSwag.png";
 import taamCute from "../assets/images/taamCute.png";
 import taamnarak from "../assets/images/taamnarak.png";
+import surfVideo from "../assets/images/surfVideo.mp4";
+import dataProcessing from "../assets/images/dataProcessing.mp4";
 
 export default {
   profile,
@@ -20,4 +22,6 @@ export default {
   taamSwag,
   taamCute,
   taamnarak,
+  surfVideo,
+  dataProcessing,
 };
