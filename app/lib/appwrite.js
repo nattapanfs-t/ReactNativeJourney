@@ -5,6 +5,7 @@ import {
   Avatars,
   Databases,
   Query,
+  Storage,
 } from "react-native-appwrite";
 export const config = {
   endpoint: "https://cloud.appwrite.io/v1",
@@ -33,14 +34,21 @@ client.setEndpoint(endpoint).setProject(projectId).setPlatform(platform);
 const account = new Account(client);
 const avatar = new Avatars(client);
 const databases = new Databases(client);
+const storage = new Storage(client);
 
 export const createUser = async (email, password, username) => {
   try {
-    const session = await account.get();
-    if (session) {
-      await account.deleteSession(session.$id);
+    // Check if there's an active session and delete it
+    try {
+      const session = await account.get();
+      if (session) {
+        await account.deleteSession("current");
+      }
+    } catch (sessionError) {
+      // No active session found, proceed
     }
 
+    // Create the new account
     const newAccount = await account.create(
       ID.unique(),
       email,
@@ -49,8 +57,13 @@ export const createUser = async (email, password, username) => {
     );
     if (!newAccount) throw new Error("Failed to create account");
 
+    // Get the avatar URL for the user
     const avatarUrl = avatar.getInitials(username);
+
+    // Sign in the new user
     await signIn(email, password);
+
+    // Create the user document in the database
     const newUser = await databases.createDocument(
       databaseId,
       userCollectionId,
@@ -62,6 +75,7 @@ export const createUser = async (email, password, username) => {
         avatar: avatarUrl,
       }
     );
+
     return newUser;
   } catch (error) {
     console.error("Error creating user:", error);
@@ -71,11 +85,22 @@ export const createUser = async (email, password, username) => {
 
 export const signIn = async (email, password) => {
   try {
-    const session = await account.createEmailPasswordSession(email, password);
+    // Check if there's an active session and delete it
+    try {
+      const session = await account.get();
+      if (session) {
+        await account.deleteSession("current");
+      }
+    } catch (sessionError) {
+      // No active session found, proceed
+    }
 
+    // Create a new session
+    const session = await account.createEmailPasswordSession(email, password);
     return session;
   } catch (error) {
-    throw new Error(error);
+    console.error("Error signing in:", error);
+    throw new Error(error.message || "An error occurred while signing in");
   }
 };
 
@@ -160,6 +185,73 @@ export const signOut = async () => {
   try {
     const session = await account.deleteSession("current");
     return session;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const getFilePreview = (async = (fileId, type) => {
+  let fileUrl;
+  try {
+    if (type === "video") {
+      fileUrl = storage.getFileView(storageId, fileId);
+    } else if (type === "image") {
+      fileUrl = storage.getFilePreview(
+        storageId,
+        fileId,
+        2000,
+        2000,
+        "top",
+        100
+      );
+    } else {
+      throw new Error("Invalid File Type");
+    }
+    if (!fileUrl) throw Error;
+    return fileUrl;
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+export const uploadFile = async (file, type) => {
+  if (!file) return;
+  const { mimeType, ...rest } = file;
+  const asset = { type: mimeType, ...rest };
+
+  try {
+    const uploadedFile = await storage.createFile(
+      storageId,
+      ID.unique(),
+      asset
+    );
+
+    const fileUrl = await getFilePreview(uploadedFile.$id, type);
+    return fileUrl;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const createVideo = async (form) => {
+  try {
+    const [thumbnailUrl, videoUrl] = await Promise.all([
+      uploadFile(form.thumbnail, "image"),
+      uploadFile(form.video, "video"),
+    ]);
+    const newPost = await databases.createDocument(
+      databaseId,
+      videoCollectionID,
+      ID.unique(),
+      {
+        title: form.title,
+        thumbnail: thumbnailUrl,
+        video: videoUrl,
+        prompt: form.prompt,
+        user: form.userId,
+      }
+    );
+    return newPost;
   } catch (error) {
     throw new Error(error);
   }
