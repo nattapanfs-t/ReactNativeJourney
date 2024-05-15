@@ -7,6 +7,7 @@ import CustomButton from "../components/CustomButton";
 import { Link, router } from "expo-router";
 import { getCurrentUser, signIn } from "../lib/appwrite";
 import { useGlobalContext } from "./context/GlobalProvider";
+import * as SecureStore from "expo-secure-store";
 
 const SignIn = () => {
   const [form, setForm] = useState({
@@ -29,6 +30,8 @@ const SignIn = () => {
       const result = await getCurrentUser();
       setUser(result);
       setisLoggedIn(true);
+      await SecureStore.setItemAsync("userEmail", form.email);
+      await SecureStore.setItemAsync("userPassword", form.password);
 
       Alert.alert("Success", "User signed in successfully");
       router.replace("/home");

@@ -248,7 +248,7 @@ export const createVideo = async (form) => {
         thumbnail: thumbnailUrl,
         video: videoUrl,
         prompt: form.prompt,
-        user: form.userId,
+        users: form.userId,
       }
     );
     return newPost;

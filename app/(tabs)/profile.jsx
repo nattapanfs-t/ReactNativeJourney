@@ -1,4 +1,11 @@
-import { View, Text, FlatList, TouchableOpacity, Image } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Image,
+  Alert,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import EmptyState from "../components/EmptyState";
 import { getUserPost, signOut } from "../lib/appwrite";
@@ -8,16 +15,23 @@ import { useGlobalContext } from "../(auth)/context/GlobalProvider";
 import { icons } from "../../constants";
 import InfoBox from "../components/InfoBox";
 import { router } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 
 const Profile = () => {
   const { user, setUser, setisLoggedIn } = useGlobalContext();
   const { data: posts } = useAppwrite(() => getUserPost(user.$id));
 
   const logout = async () => {
-    await signOut();
-    setUser(null);
-    setisLoggedIn(false);
-    router.replace("/sign-in ");
+    try {
+      await signOut();
+      setUser(null);
+      setisLoggedIn(false);
+      router.replace("/sign-in");
+      await SecureStore.deleteItemAsync("userEmail");
+      await SecureStore.deleteItemAsync("userPassword");
+    } catch (error) {
+      Alert.alert("An error occurred while logging out", error.message);
+    }
   };
 
   return (

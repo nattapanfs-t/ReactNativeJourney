@@ -1,23 +1,64 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useGlobalContext } from "./(auth)/context/GlobalProvider";
-import { Text, View, Image } from "react-native";
+import { Text, View, Image, Alert } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Link, Redirect, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView } from "react-native";
 import { images } from "../constants";
 import CustomButton from "./components/CustomButton";
+import * as LocalAuthentication from "expo-local-authentication";
+import * as SecureStore from "expo-secure-store";
 
 export default function App() {
   const { isLoading, isLoggedIn } = useGlobalContext();
+  const [authenticated, setAuthenticated] = useState(false);
 
-  // useEffect(() => {
-  //   if (!isLoading && isLoggedIn) {
-  //     router.replace("/home");
-  //   }
-  // }, [isLoggedIn, isLoading]);
+  useEffect(() => {
+    const authenticate = async () => {
+      try {
+        const hasHardware = await LocalAuthentication.hasHardwareAsync();
+        if (!hasHardware) {
+          Alert.alert("No biometric hardware found");
+          return;
+        }
 
-  if (!isLoading && isLoggedIn) return <Redirect href={"/home"} />;
+        const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+        if (!isEnrolled) {
+          Alert.alert("No biometrics enrolled");
+          return;
+        }
+
+        const result = await LocalAuthentication.authenticateAsync();
+        if (result.success) {
+          setAuthenticated(true);
+          await handleBiometricLogin();
+        } else {
+          Alert.alert("Authentication failed");
+        }
+      } catch (error) {
+        Alert.alert("An error occurred during authentication", error.message);
+      }
+    };
+    authenticate();
+  }, []);
+
+  const handleBiometricLogin = async () => {
+    try {
+      const email = await SecureStore.getItemAsync("userEmail");
+      const password = await SecureStore.getItemAsync("userPassword");
+
+      if (!email && !password) {
+        Alert.alert("No credentials found. Please log in manually.");
+        router.push("/sign-in");
+      }
+    } catch (error) {
+      Alert.alert(
+        "An error occurred while retrieving credentials",
+        error.message
+      );
+    }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#161622" }}>
@@ -30,7 +71,7 @@ export default function App() {
           />
           <Image
             source={images.cards}
-            className="max-w=--[3800px] w-full h-[300px]"
+            className="max-w-[380px] w-full h-[300px]"
             resizeMode="contain"
           />
           <View className="relative mt-5">
@@ -56,6 +97,7 @@ export default function App() {
         </View>
       </ScrollView>
       <StatusBar style="light" backgroundColor="#161622" />
+      {!isLoading && isLoggedIn && authenticated && <Redirect href={"/home"} />}
     </SafeAreaView>
   );
 }

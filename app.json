@@ -31,7 +31,9 @@
     "plugins": [
       "expo-router",
       "expo-font",
-      "expo-video"
+      "expo-video",
+      "expo-local-authentication",
+      "expo-secure-store"
     ]
   }
 }
