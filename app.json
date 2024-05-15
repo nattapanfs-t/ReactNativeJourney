@@ -33,7 +33,8 @@
       "expo-font",
       "expo-video",
       "expo-local-authentication",
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-image-picker"
     ]
   }
 }

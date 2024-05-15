@@ -136,7 +136,9 @@ export const getCurrentUser = async () => {
 
 export const getAllPosts = async () => {
   try {
-    const posts = await databases.listDocuments(databaseId, videoCollectionID);
+    const posts = await databases.listDocuments(databaseId, videoCollectionID, [
+      Query.orderDesc("$createdAt"),
+    ]);
     return posts.documents;
   } catch (error) {
     throw new Error(error);
@@ -146,7 +148,7 @@ export const getAllPosts = async () => {
 export const getLatestPosts = async () => {
   try {
     const posts = await databases.listDocuments(databaseId, videoCollectionID);
-    [Query.orderDesc("$createsAT", Query.limit(7))];
+    [Query.orderDesc("$createdAt", Query.limit(7))];
     return posts.documents;
   } catch (error) {
     throw new Error(error);

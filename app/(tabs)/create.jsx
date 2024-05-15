@@ -39,7 +39,7 @@ const Create = () => {
               "image/gif",
               "image/webp",
             ]
-          : ["video/mp4", "video/gif", "video/avi", "video/mpeg", "video/webm"],
+          : ["video/mp4", "video/gif", "video/avi", "video/mpeg"],
     });
 
     if (!result.canceled) {
