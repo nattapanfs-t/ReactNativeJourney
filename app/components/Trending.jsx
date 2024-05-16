@@ -38,8 +38,8 @@ const TrendingItem = ({ activeItem, item }) => {
       duration={500}>
       {play ? (
         <Video
-          // source={{ uri: item.video }}
-          source={images.dataProcessing}
+          source={{ uri: item.video }}
+          // source={images.dataProcessing}
           className="w-52 h-72 rounded-[33px] mt-3 bg-white/10"
           resizeMode={ResizeMode.CONTAIN}
           useNativeControls
