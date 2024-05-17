@@ -203,8 +203,6 @@ export const addBookmark = async (video, userId) => {
       }
     );
 
-    if (!bookmark) throw new Error("Unable to create bookmark");
-
     return bookmark;
   } catch (error) {
     throw new Error(error.message);
@@ -218,10 +216,6 @@ export const getBookmarkPost = async (userId) => {
       bookmarkCollectionID,
       [Query.equal("users", userId)]
     );
-
-    if (bookmarks.total === 0) {
-      return [];
-    }
 
     return bookmarks.documents;
   } catch (error) {
