@@ -14,6 +14,7 @@ export const config = {
   databaseId: "663b044100305ed42a28",
   userCollectionId: "663b046a001956f95579",
   videoCollectionID: "663b0486003bf4601be7",
+  bookmarkCollectionID: "6645d8960027a46a3646",
   storageId: "663b0610000d8938c463",
 };
 
@@ -24,6 +25,7 @@ const {
   databaseId,
   userCollectionId,
   videoCollectionID,
+  bookmarkCollectionID,
   storageId,
 } = config;
 
@@ -44,9 +46,7 @@ export const createUser = async (email, password, username) => {
       if (session) {
         await account.deleteSession("current");
       }
-    } catch (sessionError) {
-      // No active session found, proceed
-    }
+    } catch (sessionError) {}
 
     // Create the new account
     const newAccount = await account.create(
@@ -57,10 +57,8 @@ export const createUser = async (email, password, username) => {
     );
     if (!newAccount) throw new Error("Failed to create account");
 
-    // Get the avatar URL for the user
     const avatarUrl = avatar.getInitials(username);
 
-    // Sign in the new user
     await signIn(email, password);
 
     // Create the user document in the database
@@ -91,9 +89,7 @@ export const signIn = async (email, password) => {
       if (session) {
         await account.deleteSession("current");
       }
-    } catch (sessionError) {
-      // No active session found, proceed
-    }
+    } catch (sessionError) {}
 
     // Create a new session
     const session = await account.createEmailPasswordSession(email, password);
@@ -180,6 +176,57 @@ export const getUserPost = async (userId) => {
     return posts.documents;
   } catch (error) {
     throw new Error(error);
+  }
+};
+
+export const addBookmark = async (video, userId) => {
+  try {
+    const videoDocuments = await databases.listDocuments(
+      databaseId,
+      videoCollectionID,
+      [Query.equal("$id", video)]
+    );
+
+    if (videoDocuments.total === 0) throw new Error("Video not found");
+
+    const videoDocument = videoDocuments.documents[0];
+
+    const bookmark = await databases.createDocument(
+      databaseId,
+      bookmarkCollectionID,
+      ID.unique(),
+      {
+        title: videoDocument.title,
+        thumbnail: videoDocument.thumbnail,
+        video: videoDocument.video,
+        users: userId,
+      }
+    );
+
+    if (!bookmark) throw new Error("Unable to create bookmark");
+
+    return bookmark;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const getBookmarkPost = async (userId) => {
+  try {
+    const bookmarks = await databases.listDocuments(
+      databaseId,
+      bookmarkCollectionID,
+      [Query.equal("users", userId)]
+    );
+
+    if (bookmarks.total === 0) {
+      return [];
+    }
+
+    return bookmarks.documents;
+  } catch (error) {
+    console.error("Error fetching bookmarks:", error);
+    throw new Error("Failed to get bookmarks");
   }
 };
 
