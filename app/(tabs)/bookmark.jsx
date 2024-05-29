@@ -34,7 +34,7 @@ const Bookmark = () => {
         keyExtractor={(item) => item.$id}
         renderItem={({ item }) => <VideoCard video={item} />}
         ListHeaderComponent={() => (
-          <View className="my-6 px-4">
+          <View className="my-8 px-4">
             <Text className="font-pmedium text-2xl text-gray-100">
               Bookmarked Videos
             </Text>
@@ -46,6 +46,13 @@ const Bookmark = () => {
         refreshControl={
           <RefreshControl refreshing={refresing} onRefresh={onRefresh} />
         }
+        ListEmptyComponent={() => (
+          <EmptyState
+            className="justify-center items-center"
+            title="No Video Found"
+            subtitle="You do not have any videos bookmarked."
+          />
+        )}
       />
     </SafeAreaView>
   );
