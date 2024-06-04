@@ -25,7 +25,7 @@ const Bookmark = () => {
     setreFresing(false);
   };
 
-  const posts = bookmarkedPosts;
+  const posts = bookmarkedPosts0;
 
   return (
     <SafeAreaView className="bg-primary h-full">
