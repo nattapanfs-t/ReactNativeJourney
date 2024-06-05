@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useGlobalContext } from "./(auth)/context/GlobalProvider";
-import { Text, View, Image, Alert } from "react-native";
+import { Text, View, Image, Alert, ActivityIndicator } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Link, Redirect, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -9,32 +9,44 @@ import { images } from "../constants";
 import CustomButton from "./components/CustomButton";
 import * as LocalAuthentication from "expo-local-authentication";
 import * as SecureStore from "expo-secure-store";
+import { signIn, getCurrentUser } from "./lib/appwrite";
 
 export default function App() {
-  const { isLoading, isLoggedIn } = useGlobalContext();
+  const { isLoading, isLoggedIn, setUser, setisLoggedIn } = useGlobalContext();
   const [authenticated, setAuthenticated] = useState(false);
 
   useEffect(() => {
     const authenticate = async () => {
       try {
-        const hasHardware = await LocalAuthentication.hasHardwareAsync();
-        if (!hasHardware) {
-          Alert.alert("No biometric hardware found");
-          return;
-        }
+        const email = await SecureStore.getItemAsync("userEmail");
+        const password = await SecureStore.getItemAsync("userPassword");
 
-        const isEnrolled = await LocalAuthentication.isEnrolledAsync();
-        if (!isEnrolled) {
-          Alert.alert("No biometrics enrolled");
-          return;
-        }
-
-        const result = await LocalAuthentication.authenticateAsync();
-        if (result.success) {
+        if (email && password) {
+          await signIn(email, password);
+          const result = await getCurrentUser();
+          setUser(result);
+          setisLoggedIn(true);
           setAuthenticated(true);
-          await handleBiometricLogin();
         } else {
-          Alert.alert("Authentication failed");
+          const hasHardware = await LocalAuthentication.hasHardwareAsync();
+          if (!hasHardware) {
+            Alert.alert("No biometric hardware found");
+            return;
+          }
+
+          const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+          if (!isEnrolled) {
+            Alert.alert("No biometrics enrolled\nPlease log in manually");
+            return;
+          }
+
+          const result = await LocalAuthentication.authenticateAsync();
+          if (result.success) {
+            setAuthenticated(true);
+            await handleBiometricLogin();
+          } else {
+            Alert.alert("Authentication failed");
+          }
         }
       } catch (error) {
         Alert.alert("An error occurred during authentication", error.message);
@@ -95,6 +107,9 @@ export default function App() {
             containerStyles="w-full mt-7"
           />
         </View>
+        {isLoading && !isLoggedIn ? (
+          <ActivityIndicator size="large" color="#FF9001" />
+        ) : null}
       </ScrollView>
       <StatusBar style="light" backgroundColor="#161622" />
       {!isLoading && isLoggedIn && authenticated && <Redirect href={"/home"} />}

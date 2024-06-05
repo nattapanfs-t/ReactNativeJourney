@@ -109,19 +109,21 @@ const Profile = () => {
         onRequestClose={cancel}>
         <View style={styles.modalBackground}>
           <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Are You Sure To Sign Out?</Text>
+            <Text style={styles.modalTitle}>
+              Would You Like To Signing Out?
+            </Text>
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 onPress={confirmLogout}
                 style={styles.logoutButton}>
-                <Text style={{ color: "#CDCDE0", fontWeight: "bold" }}>
-                  <AntDesign name="logout" size={15} color="#CDCDE0" />
+                <Text style={{ color: "#161622", fontWeight: "bold" }}>
+                  <AntDesign name="logout" size={20} color="#161622" />
                   Sign out
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={cancel} style={styles.cancelButton}>
                 <Text style={{ color: "#CDCDE0", fontWeight: "bold" }}>
-                  <AntDesign name="back" size={17} color="#CDCDE0" />
+                  <AntDesign name="back" size={20} color="#CDCDE0" />
                   Cancel
                 </Text>
               </TouchableOpacity>
@@ -148,7 +150,7 @@ const styles = {
     alignItems: "center",
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: 19,
     fontWeight: "bold",
     marginBottom: 15,
     color: "#CDCDE0",
@@ -157,7 +159,7 @@ const styles = {
     flexDirection: "row",
   },
   logoutButton: {
-    // backgroundColor: "red",
+    backgroundColor: "#FF9001",
     borderRadius: 13,
     padding: 10,
     shadowColor: "#000",
@@ -168,7 +170,7 @@ const styles = {
     margin: 10,
   },
   cancelButton: {
-    // backgroundColor: "#ffa300",
+    backgroundColor: "#616191",
     opacity: "0.8",
     borderRadius: 13,
     padding: 10,
