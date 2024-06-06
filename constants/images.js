@@ -5,9 +5,9 @@ import path from "../assets/images/path.png";
 import logo from "../assets/images/logo.png";
 import logoSmall from "../assets/images/logo-small.png";
 import empty from "../assets/images/empty.png";
-import taamSwag from "../assets/images/taamSwag.png";
-import taamCute from "../assets/images/taamCute.png";
-import taamnarak from "../assets/images/taamnarak.png";
+// import taamSwag from "../assets/images/taamSwag.png";
+// import taamCute from "../assets/images/taamCute.png";
+// import taamnarak from "../assets/images/taamnarak.png";
 import surfVideo from "../assets/images/surfVideo.mp4";
 import dataProcessing from "../assets/images/dataProcessing.mp4";
 
@@ -19,9 +19,9 @@ export default {
   logo,
   logoSmall,
   empty,
-  taamSwag,
-  taamCute,
-  taamnarak,
+  // taamSwag,
+  // taamCute,
+  // taamnarak,
   surfVideo,
   dataProcessing,
 };
